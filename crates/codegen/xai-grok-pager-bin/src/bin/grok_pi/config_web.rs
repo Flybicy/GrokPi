@@ -83,7 +83,7 @@ fn open_browser(url: &str) {
     let _ = std::process::Command::new("xdg-open").arg(url).spawn();
 }
 
-fn handle_connection(conn: TcpStream, lan: bool) -> Result<()> {
+fn handle_connection(mut conn: TcpStream, lan: bool) -> Result<()> {
     let mut reader = BufReader::new(conn.try_clone()?);
     let mut line = String::new();
     if reader.read_line(&mut line)? == 0 {

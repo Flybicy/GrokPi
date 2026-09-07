@@ -547,6 +547,9 @@ impl AgentView {
                                 }
                             }
                         }
+                        // Fullscreen opens need `&mut self`, which conflicts with the
+                        // `&self.tasks.view_button_rects` borrow below; defer them.
+                        let mut deferred_fullscreen = Vec::new();
                         for (entry_id, rect) in &self.tasks.view_button_rects {
                             if rect.contains((mouse.column, mouse.row).into()) {
                                 match entry_id {
@@ -583,27 +586,31 @@ impl AgentView {
                                         if let Some(child_sid) = self
                                             .descendant_subagent_info(sid)
                                             .map(|info| info.child_session_id.to_string())
-                                            && self.open_descendant_subagent_fullscreen(child_sid)
                                         {
-                                            return InputOutcome::Changed;
+                                            deferred_fullscreen.push(child_sid);
                                         }
                                     }
                                     TaskEntryId::Scheduled(tid) => {
-                                        if let Some(sid) = self
+                                        if let Some(child_sid) = self
                                             .session
                                             .scheduled_tasks
                                             .get(tid)
                                             .and_then(|info| info.last_subagent_id.clone())
-                                            && let Some(child_sid) = self
-                                                .descendant_subagent_info(&sid)
-                                                .map(|info| info.child_session_id.to_string())
-                                            && self.open_descendant_subagent_fullscreen(child_sid)
+                                            .and_then(|sid| {
+                                                self.descendant_subagent_info(&sid)
+                                                    .map(|info| info.child_session_id.to_string())
+                                            })
                                         {
-                                            return InputOutcome::Changed;
+                                            deferred_fullscreen.push(child_sid);
                                         }
                                     }
                                     TaskEntryId::Workflow(_) => {}
                                 }
+                            }
+                        }
+                        for child_sid in deferred_fullscreen {
+                            if self.open_descendant_subagent_fullscreen(child_sid) {
+                                return InputOutcome::Changed;
                             }
                         }
                         self.tasks.handle_mouse(

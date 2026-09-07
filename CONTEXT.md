@@ -20,6 +20,14 @@
 - WebUI page:   crates/codegen/xai-grok-pager-bin/src/bin/grok_pi/config_web.html
 - models.json 事务层: crates/codegen/xai-grok-pager/src/pi_model_config.rs
 
+## 本机构建环境（Windows, 可复用）
+- 无 MSVC。用 rustup GNU toolchain：`1.94.0-x86_64-pc-windows-gnu`（rust-toolchain.toml 锁 1.94.0）；已另装 nightly-msvc 仅供语法检查。
+- MinGW 工具链（免管理员, msys2 包组）: `C:\mingw-rust\msys\mingw64\bin`（gcc 16.2 + binutils 2.47 + crt/headers/winpthreads/zlib/zstd/gettext/libiconv）。镜像源: mirrors.tuna.tsinghua.edu.cn/msys2（curl 需加 `--ssl-no-revoke`）。
+- protoc: `C:\protoc\bin` (33.0)。
+- 检查命令: `set PATH=%USERPROFILE%\.cargo\bin;C:\mingw-rust\msys\mingw64\bin;C:\protoc\bin;%PATH% && cargo +1.94.0-x86_64-pc-windows-gnu check --target x86_64-pc-windows-gnu -p xai-grok-pager-bin --bin grok-pi`
+- rustup 自更新在此网络下报错无害；rust-mingw 自带 dlltool 有 CreateProcess bug ，绝对不要用 self-contained 目录里的，有 msys binutils 就够。
+- 用 stable 1.98 会在上游 mouse.rs 报 E0502（borrowck 更严）；以锁定的 1.94 为准。
+
 ## Open items & next step
 1. 编译验证：本机无 MSVC linker，已尝试（VS Build Tools 静默安装被 UAC 挡住）。语法级检查已过；完整 cargo check 待 linker 可用。
 2. 确认 fork 处置（重 fork Dwsy/grok-pi-tui 或批准强推 Flybicy/GrokPi main）后提交推送。
