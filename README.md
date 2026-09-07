@@ -58,6 +58,7 @@ npm install --global @earendil-works/pi-coding-agent
 ```
 
 On Windows, if an older `grok-pi.exe` cannot find bare `pi`, point it at the shim:
+In this fork, a missing Pi is installed automatically on first `grok-pi` launch (pi.dev installer, which bundles its own Node runtime). Disable with `PI_GROK_NO_PI_BOOTSTRAP=1`; `--offline` / `PI_OFFLINE=1` also skips it. If you want to pin an exact Pi version against upstream churn, point `PI_BIN`/`--pi-bin` at a specific install; grok-pi then never touches your system Pi.
 
 ```powershell
 $env:PI_BIN = "$env:LOCALAPPDATA\pi-node\current\pi.cmd"

@@ -54,6 +54,7 @@ npm install --global @earendil-works/pi-coding-agent
 ```
 
 Windows 上若旧版 `grok-pi.exe` 找不到裸名 `pi`，可显式指定 shim：
+本 fork 中，首次启动 `grok-pi` 检测不到 Pi 时会自动调用 pi.dev 安装器完成安装（该安装器自带 Node 运行时，无需单独装 Node）。如需禁用：`PI_GROK_NO_PI_BOOTSTRAP=1`；`--offline` / `PI_OFFLINE=1` 同样会跳过。若担心 Pi 上游更新带来不兼容，可用 `PI_BIN` / `--pi-bin` 指向某个固定版本的安装目录，grok-pi 就不会再碰你的系统 Pi。
 
 ```powershell
 $env:PI_BIN = "$env:LOCALAPPDATA\pi-node\current\pi.cmd"

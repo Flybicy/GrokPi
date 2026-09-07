@@ -96,6 +96,14 @@ pub(super) fn ensure_compatible_pi_host(program: &str) -> Result<(Version, Strin
             bail!("Pi {version} is below minimum {MIN_PI_VERSION}");
         }
         PiHostCheck::Missing { program, detail } => {
+            // Self-heal: install Pi automatically (pi.dev installer bundles its
+            // own Node runtime). Opt out with PI_GROK_NO_PI_BOOTSTRAP=1 or
+            // PI_OFFLINE=1. On success re-probe and continue normally.
+            if pi_bootstrap_enabled() && try_bootstrap_pi() {
+                if let PiHostCheck::Ok { version, program } = check_pi_host(&program) {
+                    return Ok((version, program));
+                }
+            }
             print_upgrade_help(
                 &format!("Pi host not found or failed: {program} ({detail})"),
                 &program,
@@ -109,6 +117,49 @@ pub(super) fn ensure_compatible_pi_host(program: &str) -> Result<(Version, Strin
             );
             bail!("unreadable Pi version from {program}");
         }
+    }
+}
+
+/// Prepend well-known Pi install dirs to PATH so a just-installed host is
+/// discoverable in this process without a shell restart. Idempotent.
+fn augment_path_with_pi_dirs() {
+    use std::path::PathBuf;
+    let mut dirs: Vec<PathBuf> = Vec::new();
+    let mut push_rel = |base: std::ffi::OsString, rel: &str| {
+        dirs.push(PathBuf::from(base).join(rel));
+    };
+    #[cfg(windows)]
+    {
+        for key in ["LOCALAPPDATA"] {
+            if let Some(base) = std::env::var_os(key) {
+                push_rel(base, "pi");
+            }
+        }
+        if let Some(la) = std::env::var_os("LOCALAPPDATA") {
+            push_rel(la, "pi-node");
+        }
+        if let Some(ra) = std::env::var_os("APPDATA") {
+            push_rel(ra, "npm");
+        }
+    }
+    #[cfg(not(windows))]
+    {
+        if let Some(home) = std::env::var_os("HOME") {
+            push_rel(home.clone(), ".local/bin");
+            push_rel(home, ".pi/bin");
+        }
+    }
+    let cur = std::env::var_os("PATH").unwrap_or_default();
+    let mut parts: Vec<_> = std::env::split_paths(&cur).collect();
+    for d in dirs.into_iter().rev() {
+        if d.is_dir() && !parts.iter().any(|p| p == &d) {
+            parts.insert(0, d);
+        }
+    }
+    if let Ok(joined) = std::env::join_paths(parts) {
+        // SAFETY: bootstrap runs single-threaded at startup before any
+        // concurrent env access, so mutating PATH here is sound.
+        unsafe { std::env::set_var("PATH", joined) };
     }
 }
 
@@ -375,6 +426,54 @@ fn install_command_for_host() -> &'static str {
     } else {
         INSTALL_UNIX
     }
+}
+
+/// Automatic Pi installation is on by default; disable with
+/// PI_GROK_NO_PI_BOOTSTRAP=1 or PI_OFFLINE=1 (no-network runs must not probe).
+fn pi_bootstrap_enabled() -> bool {
+    let off = |name: &str| {
+        std::env::var(name)
+            .map(|v| matches!(v.trim(), "1" | "true" | "TRUE" | "True"))
+            .unwrap_or(false)
+    };
+    !off("PI_GROK_NO_PI_BOOTSTRAP") && !off("PI_OFFLINE")
+}
+
+/// Run the official Pi installer (pi.dev bundles its own Node runtime, so
+/// this also works on machines without Node). Returns true when some installer
+/// reported success; the caller re-probes to confirm.
+fn try_bootstrap_pi() -> bool {
+    eprintln!("Pi not found — installing it now (set PI_GROK_NO_PI_BOOTSTRAP=1 to disable)...");
+    #[cfg(windows)]
+    let attempts: &[(&str, &[&str])] = &[
+        ("powershell", &["-NoProfile", "-Command", "irm https://pi.dev/install.ps1 | iex"]),
+        ("cmd.exe", &["/D", "/C", "npm", "i", "-g", "@earendil-works/pi-coding-agent"]),
+    ];
+    #[cfg(not(windows))]
+    let attempts: &[(&str, &[&str])] = &[
+        ("sh", &["-c", "curl -fsSL https://pi.dev/install.sh | sh"]),
+        ("npm", &["i", "-g", "@earendil-works/pi-coding-agent"]),
+    ];
+    for (prog, args) in attempts {
+        let status = Command::new(prog)
+            .args(*args)
+            .stdin(std::process::Stdio::inherit())
+            .stdout(std::process::Stdio::inherit())
+            .stderr(std::process::Stdio::inherit())
+            .status();
+        match status {
+            Ok(s) if s.success() => {
+                // Fresh installers update the *registry* PATH, not this running
+                // process, so add well-known Pi install dirs before re-probing.
+                augment_path_with_pi_dirs();
+                return true;
+            }
+            Ok(s) => eprintln!("pi bootstrap installer {prog} exited with {s}; trying next..."),
+            Err(e) => eprintln!("pi bootstrap installer {prog} unavailable ({e}); trying next..."),
+        }
+    }
+    eprintln!("pi bootstrap: all installers failed.");
+    false
 }
 
 /// Also print the other platform's one-liner when helpful (WSL/users reading logs).
