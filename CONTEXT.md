@@ -36,4 +36,5 @@
 
 ## Open items & next step
 1. 可选：把 mouse.rs 的 E0502 修复 PR 给上游 Dwsy/grok-pi-tui。
-2. 后续增强实施（设计见 docs/proposals/context-and-skill-evolution.md）：billion-context 风格压缩接入、WikiSkill 式 skill 演化（subagents V2 做 maintainer/proposer、gating 评估是要点）。
+2. Skill 增强已落地（轻量版 WikiSkill）：内置扩展 extensions/pi-grok-skill-wiki（F2 pi_skill_wiki 默认开）= patterns/ wiki 页 + index/log/inbox，before_agent_start 注入目录，skill_wiki_record/read/search 工具，/skill-note /skill-wiki 命令。已用 pi-coding-agent 0.84.3 类型 typecheck + mock harness 行为测试（target/skill-wiki-test，未提交）。未做：真实 LLM 端到端跑通（需 pi + 供应商 key）。
+3. 上下文压缩（billion-context-pi 路线）未开工：用户定为 skill 完成后再做；可能接单点 = 文档/WebUI 引导 `pi install npm:billion-context-pi` + 兼容性踩坑记录。
