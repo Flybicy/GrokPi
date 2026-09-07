@@ -1,6 +1,6 @@
 //! `grok-pi` update discovery and install.
 //!
-//! Read `Dwsy/grok-pi` release metadata and install via the published
+//! Read `Flybicy/GrokPi` release metadata and install via the published
 //! `install.sh` / `install.ps1`. Release discovery prefers the official
 //! GitHub API, then the official scoped npm package, and only then uses the
 //! JSP proxy. The unscoped `grok-pi` npm package is a foreign package and is
@@ -16,10 +16,10 @@ use crate::auto_update::UpdateAvailable;
 
 /// GitHub Releases "latest" API for this project's published binaries.
 pub const PI_GH_RELEASES_LATEST_URL: &str =
-    "https://api.github.com/repos/Dwsy/grok-pi-tui/releases/latest";
+    "https://api.github.com/repos/Flybicy/GrokPi/releases/latest";
 /// Official GitHub Releases page. Unlike the API, this is not subject to the
 /// unauthenticated API rate limit and redirects to the canonical latest tag.
-const PI_GH_RELEASES_PAGE_LATEST_URL: &str = "https://github.com/Dwsy/grok-pi/releases/latest";
+const PI_GH_RELEASES_PAGE_LATEST_URL: &str = "https://github.com/Flybicy/GrokPi/releases/latest";
 /// Official npm package metadata. Do not use the unscoped `grok-pi` package:
 /// it belongs to another project.
 const PI_NPM_PACKAGE_METADATA_URL: &str = "https://registry.npmjs.org/@dwsy%2Fgrok-pi";
@@ -57,7 +57,7 @@ async fn fetch_release_latest() -> Result<(String, &'static str)> {
     }
 
     let proxy_url = format!(
-        "{}Dwsy/grok-pi/releases/latest",
+        "{}Flybicy/GrokPi/releases/latest",
         decode_proxy_part(JSP_PROXY_PREFIX_B64)
     );
     match fetch_release_from_url(&client, &proxy_url, "jsp-proxy").await {
@@ -338,7 +338,7 @@ async fn install_pi_from_github(version: &str) -> Result<()> {
 #[cfg(not(windows))]
 async fn install_pi_unix_sh(tag: &str) -> Result<()> {
     // The installer script is identical across tags; pin the binary via env.
-    let script_url = "https://github.com/Dwsy/grok-pi/releases/latest/download/install.sh";
+    let script_url = "https://github.com/Flybicy/GrokPi/releases/latest/download/install.sh";
     let mut cmd = tokio::process::Command::new("sh");
     cmd.arg("-c").arg(format!(
         "curl -fsSL {script_url} | GROK_PI_VERSION={tag} sh"
@@ -356,7 +356,7 @@ async fn install_pi_unix_sh(tag: &str) -> Result<()> {
 #[cfg(windows)]
 async fn install_pi_windows_ps1(tag: &str) -> Result<()> {
     let script = format!(
-        "$env:GROK_PI_VERSION='{tag}'; irm https://github.com/Dwsy/grok-pi/releases/latest/download/install.ps1 | iex"
+        "$env:GROK_PI_VERSION='{tag}'; irm https://github.com/Flybicy/GrokPi/releases/latest/download/install.ps1 | iex"
     );
     let mut cmd = tokio::process::Command::new("powershell");
     cmd.args([
@@ -403,7 +403,7 @@ mod tests {
     #[test]
     fn official_release_page_extracts_redirected_tag() {
         let url =
-            url::Url::parse("https://github.com/Dwsy/grok-pi-tui/releases/tag/v0.1.0").unwrap();
+            url::Url::parse("https://github.com/Flybicy/GrokPi/releases/tag/v0.1.0").unwrap();
         assert_eq!(normalize_github_release_page_url(&url).unwrap(), "0.1.0");
     }
 

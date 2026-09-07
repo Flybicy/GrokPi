@@ -151,7 +151,7 @@ def main() -> int:
     p.add_argument("-o", "--output", default="-", help="Output path (default: stdout)")
     p.add_argument(
         "--repo",
-        default="Dwsy/grok-pi",
+        default="Flybicy/GrokPi",
         help="GitHub repo for fallback/install links",
     )
     p.add_argument(

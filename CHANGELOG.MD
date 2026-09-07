@@ -6,7 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.1.9] - 2026-09-07
+
 ### Added
+- `grok-pi` now auto-installs a missing Pi host on first run: the official
+  pi.dev installer first, then `npm i -g @earendil-works/pi-coding-agent` as
+  fallback. Well-known install dirs are added to the process PATH so the
+  freshly installed Pi is found without a shell restart. Opt out with
+  `PI_GROK_NO_PI_BOOTSTRAP=1` (automatic under `PI_OFFLINE=1`).
 
 - `grok-pi config` launches a loopback WebUI (CC-lite style) for configuring Pi model providers: provider list, API kind/base URL/key, and per-model fields, edited against Pi's `models.json` through the same snapshot/backup/atomic-write transaction as `/pi-models`. `--port` overrides the default port (31415), `--lan` opts into LAN access, `--no-open` skips opening the browser.
 - New bundled extension `pi-grok-skill-wiki` (F2 → Agent → **Pi skill wiki**, on by default): a lightweight WikiSkill-style persistent knowledge layer. The pattern catalog is injected into the system prompt each session; the agent records reusable techniques/pitfalls via `skill_wiki_record`, reads them back with `skill_wiki_read` / `skill_wiki_search`, and users can drop quick notes with `/skill-note`. Stored under `~/.grok-pi/skill-wiki` (patterns + index + evolution log + inbox).

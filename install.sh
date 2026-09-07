@@ -2,15 +2,15 @@
 # grok-pi installer (Unix)
 #
 # One-line install (latest):
-#   curl -fsSL https://github.com/Dwsy/grok-pi/releases/latest/download/install.sh | sh
+#   curl -fsSL https://github.com/Flybicy/GrokPi/releases/latest/download/install.sh | sh
 #
 # Pin a version:
-#   curl -fsSL https://github.com/Dwsy/grok-pi/releases/download/v0.0.1/install.sh | GROK_PI_VERSION=v0.0.1 sh
+#   curl -fsSL https://github.com/Flybicy/GrokPi/releases/download/v0.0.1/install.sh | GROK_PI_VERSION=v0.0.1 sh
 #
 # Env overrides:
 #   GROK_PI_VERSION=v0.0.1|latest     (default: latest)
 #   GROK_PI_INSTALL_DIR=$HOME/.local/bin
-#   GROK_PI_REPO=Dwsy/grok-pi
+#   GROK_PI_REPO=Flybicy/GrokPi
 #   GROK_PI_SKIP_PI_HINT=1            skip Pi host install hint
 #   GROK_PI_FORCE=1                   reinstall even if already present
 #
@@ -21,7 +21,7 @@
 #   grok-pi-linux-aarch64.tar.gz
 set -eu
 
-REPOSITORY="${GROK_PI_REPO:-Dwsy/grok-pi}"
+REPOSITORY="${GROK_PI_REPO:-Flybicy/GrokPi}"
 VERSION="${GROK_PI_VERSION:-latest}"
 INSTALL_DIR="${GROK_PI_INSTALL_DIR:-$HOME/.local/bin}"
 SKIP_PI_HINT="${GROK_PI_SKIP_PI_HINT:-0}"

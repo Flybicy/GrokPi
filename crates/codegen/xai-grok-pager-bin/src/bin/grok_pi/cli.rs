@@ -58,7 +58,7 @@ Extension startup recovery:
   it does not send absolute paths, stack traces, or session data.
 
 Update (GitHub releases only):
-  grok-pi update            Install latest from Dwsy/grok-pi
+  grok-pi update            Install latest from Flybicy/GrokPi
   grok-pi update --check    Print current vs latest
   Welcome Ctrl+U            Same install when an update is offered
 

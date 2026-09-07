@@ -1,15 +1,15 @@
 # grok-pi installer (Windows PowerShell)
 #
 # One-line install (latest):
-#   irm https://github.com/Dwsy/grok-pi/releases/latest/download/install.ps1 | iex
+#   irm https://github.com/Flybicy/GrokPi/releases/latest/download/install.ps1 | iex
 #
 # Pin a version:
-#   $env:GROK_PI_VERSION='v0.0.1'; irm https://github.com/Dwsy/grok-pi/releases/download/v0.0.1/install.ps1 | iex
+#   $env:GROK_PI_VERSION='v0.0.1'; irm https://github.com/Flybicy/GrokPi/releases/download/v0.0.1/install.ps1 | iex
 #
 # Env overrides:
 #   $env:GROK_PI_VERSION = 'v0.0.1' | 'latest'
 #   $env:GROK_PI_INSTALL_DIR = "$env:LOCALAPPDATA\grok-pi\bin"
-#   $env:GROK_PI_REPO = 'Dwsy/grok-pi'
+#   $env:GROK_PI_REPO = 'Flybicy/GrokPi'
 #   $env:GROK_PI_SKIP_PI_HINT = '1'
 #   $env:GROK_PI_FORCE = '1'
 #
@@ -119,7 +119,7 @@ function Write-PiHostHint {
 
 # ── main ────────────────────────────────────────────────────────────────────
 
-$repository = if ($env:GROK_PI_REPO) { $env:GROK_PI_REPO } else { 'Dwsy/grok-pi' }
+$repository = if ($env:GROK_PI_REPO) { $env:GROK_PI_REPO } else { 'Flybicy/GrokPi' }
 $version = if ($env:GROK_PI_VERSION) { $env:GROK_PI_VERSION } else { 'latest' }
 $installDir = if ($env:GROK_PI_INSTALL_DIR) {
     $env:GROK_PI_INSTALL_DIR
