@@ -108,6 +108,7 @@ grok-pi update
 | Session workflow | Resume, tree navigation, labels, recap, context inspection, and session picker |
 | Resource management | Native manager for Pi extensions, skills, prompts, and themes |
 | Skill knowledge | Built-in persistent skill wiki (`pi_skill_wiki`, F2 → Agent): pattern catalog injected into the system prompt, `skill_wiki_record/read/search` tools, `/skill-note` quick notes |
+| Context compression | Model-driven long-session compression via [`billion-context-pi`](docs/usage/context-compression.md): `pi install npm:billion-context-pi`, verified compatible with grok-pi's bridges |
 | Updates | GitHub Releases-based update check and installation |
 
 For field-level behavior and intentional omissions, see the [feature matrix](docs/FEATURE_MATRIX.md).

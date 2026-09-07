@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - `grok-pi config` launches a loopback WebUI (CC-lite style) for configuring Pi model providers: provider list, API kind/base URL/key, and per-model fields, edited against Pi's `models.json` through the same snapshot/backup/atomic-write transaction as `/pi-models`. `--port` overrides the default port (31415), `--lan` opts into LAN access, `--no-open` skips opening the browser.
 - New bundled extension `pi-grok-skill-wiki` (F2 → Agent → **Pi skill wiki**, on by default): a lightweight WikiSkill-style persistent knowledge layer. The pattern catalog is injected into the system prompt each session; the agent records reusable techniques/pitfalls via `skill_wiki_record`, reads them back with `skill_wiki_read` / `skill_wiki_search`, and users can drop quick notes with `/skill-note`. Stored under `~/.grok-pi/skill-wiki` (patterns + index + evolution log + inbox).
+- Documented the recommended context-compression path (`docs/usage/context-compression.md`): install `billion-context-pi` for model-driven long-session compression. Verified end-to-end against a local OpenAI-compatible mock on pi 0.85.1: message `<acp>` refs, `acp_status` / `compress` tool execution, protected-zone and min-size guardrails, and coexistence with the bundled grok-pi bridges.
 
 ### Fixed
 
