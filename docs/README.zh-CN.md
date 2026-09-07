@@ -62,6 +62,12 @@ grok-pi --pi-bin $env:PI_BIN
 
 ## 启动
 
+首次使用 —— 先启动供应商配置 WebUI（写入 Pi 的 `~/.pi/agent/models.json`，带备份 + 原子写入，运行中的实例会热加载）：
+
+```bash
+grok-pi config
+```
+
 在任意项目目录下直接运行：
 
 ```bash
@@ -86,6 +92,7 @@ grok-pi update
 |---|---|
 | Agent Runtime | Pi 模型、Provider、工具、扩展、skills、会话、重试和压缩 |
 | 模型管理 | `/pi-models` 提供原生 Provider → Model → Details 编辑器，含安全 `models.json` 事务、备份/恢复、Pi 热重载和 typed 激活；`/model` 保留为快速切换器 |
+| 供应商配置 | `grok-pi config` 启动本地 WebUI（cclite 风格）编辑 Pi 供应商、API Key 与模型列表，写 `models.json` 带备份 + 原子保存 |
 | 终端 UI | Grok Pager 输入、斜杠补全、Markdown、工具卡片、diff、对话框和 scrollback |
 | 产品教程 | `/tutorial`（别名 `/tour`、`/onboarding`）展示 18 个 grok-pi 能力域：Pager 原生工作流、Pi Provider/模型/工具/会话、扩展/Skill/Package 生态、产品桥接、可选自动化与明确边界 |
 | **Remote TUI 桥接** | Pi `ctx.ui.custom` 组件通过 Grok Build 原生 Pager 渲染，不创建第二套 TUI |

@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>grok-pi · Model Providers</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0f1115;
+    --panel: #171a21;
+    --border: #2a2f3a;
+    --text: #e6e9ef;
+    --muted: #8b93a3;
+    --accent: #5ab0ff;
+    --danger: #ff6b6b;
+    --ok: #51cf8a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font: 14px/1.5 -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+  header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  h1 { font-size: 17px; margin: 0; font-weight: 600; }
+  header .path { color: var(--muted); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  main { max-width: 980px; margin: 0 auto; padding: 20px 24px 96px; }
+  .provider {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .provider-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .provider-head .name { font-weight: 600; font-size: 15px; flex: 1; }
+  .grid { display: grid; grid-template-columns: 110px 1fr; gap: 8px 12px; align-items: center; }
+  label { color: var(--muted); font-size: 12px; }
+  input, select {
+    width: 100%;
+    background: #10131a;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    padding: 7px 9px;
+    font-size: 13px;
+  }
+  input:focus, select:focus { outline: 1px solid var(--accent); border-color: var(--accent); }
+  button {
+    background: #1d2230;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    padding: 7px 12px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  button:hover { border-color: var(--accent); }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #071018; font-weight: 600; }
+  button.danger { color: var(--danger); }
+  table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+  th { text-align: left; color: var(--muted); font-size: 11px; font-weight: 500; padding: 4px 6px; }
+  td { padding: 3px 6px; border-top: 1px solid var(--border); }
+  td input { padding: 5px 7px; }
+  td.center { text-align: center; }
+  .toolbar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 12px 24px;
+    background: rgba(15,17,21,.92);
+    border-top: 1px solid var(--border);
+    backdrop-filter: blur(6px);
+  }
+  #status { font-size: 13px; }
+  #status.ok { color: var(--ok); }
+  #status.err { color: var(--danger); }
+  .spacer { flex: 1; }
+  .hint { color: var(--muted); font-size: 12px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>grok-pi · Model Providers</h1>
+  <span class="path" id="path"></span>
+</header>
+<main>
+  <p class="hint">
+    Edits Pi's <code>models.json</code> (provider → models). Saving writes atomically with a
+    timestamped backup; a running grok-pi picks up changes on its next model reload.
+  </p>
+  <div id="providers"></div>
+  <button id="add-provider">+ Add provider</button>
+</main>
+<div class="toolbar">
+  <button class="primary" id="save">Save</button>
+  <button id="reload">Reload from disk</button>
+  <span class="spacer"></span>
+  <span id="status"></span>
+</div>
+
+<script>
+const API = "/api/config";
+const API_KINDS = [
+  "", // provider default
+  "openai-completions",
+  "openai-responses",
+  "openai-codex-responses",
+  "anthropic-messages",
+  "google-generative-ai",
+  "google-vertex",
+  "azure-openai-responses",
+  "bedrock-converse-stream",
+];
+
+let state = { path: "", document: { providers: {} } };
+
+const $ = (sel) => document.querySelector(sel);
+const el = (tag, attrs = {}, children = []) => {
+  const node = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") node.className = v;
+    else if (k === "text") node.textContent = v;
+    else if (k.startsWith("on")) node.addEventListener(k.slice(2), v);
+    else node.setAttribute(k, v);
+  }
+  for (const child of children) node.appendChild(child);
+  return node;
+};
+
+function status(msg, kind) {
+  const s = $("#status");
+  s.textContent = msg;
+  s.className = kind || "";
+}
+
+async function load() {
+  status("Loading…");
+  const res = await fetch(API);
+  const body = await res.json();
+  if (!res.ok) throw new Error(body.error || res.statusText);
+  state.path = body.path;
+  state.document = body.document || {};
+  state.document.providers = state.document.providers || {};
+  $("#path").textContent = state.path;
+  render();
+  status("");
+}
+
+function providerEntries() {
+  return Object.entries(state.document.providers);
+}
+
+function render() {
+  const root = $("#providers");
+  root.textContent = "";
+  for (const [id, p] of providerEntries()) {
+    root.appendChild(renderProvider(id, p));
+  }
+  if (providerEntries().length === 0) {
+    root.appendChild(el("p", { class: "hint", text: "No custom providers yet. Pi's built-in providers also work without being listed here." }));
+  }
+}
+
+function field(labelText, input) {
+  return [el("label", { text: labelText }), input];
+}
+
+function renderProvider(id, p) {
+  p.models = Array.isArray(p.models) ? p.models : [];
+  const card = el("div", { class: "provider" });
+
+  const head = el("div", { class: "provider-head" });
+  head.appendChild(el("span", { class: "name", text: id }));
+  head.appendChild(el("button", {
+    class: "danger", text: "Delete provider",
+    onclick: () => {
+      if (confirm(`Delete provider "${id}" and its ${p.models.length} model(s)?`)) {
+        delete state.document.providers[id];
+        render();
+      }
+    },
+  }));
+  card.appendChild(head);
+
+  const grid = el("div", { class: "grid" });
+  const baseUrl = el("input", { value: p.baseUrl || "", placeholder: "https://api.example.com/v1" });
+  baseUrl.addEventListener("input", () => { p.baseUrl = baseUrl.value || undefined; });
+  const apiKey = el("input", { value: p.apiKey || "", type: "password", placeholder: "sk-…" });
+  apiKey.addEventListener("input", () => { p.apiKey = apiKey.value || undefined; });
+  const api = el("select");
+  for (const kind of API_KINDS) {
+    const opt = el("option", { value: kind, text: kind || "(pi default)" });
+    if ((p.api || "") === kind) opt.selected = true;
+    api.appendChild(opt);
+  }
+  api.addEventListener("change", () => { p.api = api.value || undefined; });
+  grid.append(...field("Base URL", baseUrl), ...field("API kind", api), ...field("API key", apiKey));
+  card.appendChild(grid);
+
+  const table = el("table");
+  table.appendChild(el("tr", {}, ["Model ID", "Display name", "Reasoning", "Context", "Max tokens", ""].map(t => el("th", { text: t }))));
+  for (const m of p.models) table.appendChild(renderModelRow(p, m));
+  card.appendChild(table);
+
+  card.appendChild(el("button", {
+    text: "+ Add model",
+    onclick: () => {
+      p.models.push({ id: "", name: "", reasoning: false });
+      render();
+    },
+  }));
+  card.lastChild.style.marginTop = "8px";
+  return card;
+}
+
+function renderModelRow(p, m) {
+  const row = el("tr");
+  const idIn = el("input", { value: m.id || "", placeholder: "gpt-4o" });
+  idIn.addEventListener("input", () => { m.id = idIn.value; });
+  const nameIn = el("input", { value: m.name || "", placeholder: m.id || "" });
+  nameIn.addEventListener("input", () => { m.name = nameIn.value; });
+  const reasoning = el("input", { type: "checkbox" });
+  reasoning.checked = !!m.reasoning;
+  reasoning.addEventListener("change", () => { m.reasoning = reasoning.checked ? true : undefined; });
+  const ctx = el("input", { value: m.contextWindow ?? "", type: "number", min: "0" });
+  ctx.addEventListener("input", () => { m.contextWindow = ctx.value ? Number(ctx.value) : undefined; });
+  const max = el("input", { value: m.maxTokens ?? "", type: "number", min: "0" });
+  max.addEventListener("input", () => { m.maxTokens = max.value ? Number(max.value) : undefined; });
+  const del = el("button", { class: "danger", text: "×", title: "Remove model", onclick: () => { p.models = p.models.filter(x => x !== m); render(); } });
+  row.append(
+    el("td", {}, [idIn]), el("td", {}, [nameIn]),
+    el("td", { class: "center" }, [reasoning]),
+    el("td", {}, [ctx]), el("td", {}, [max]),
+    el("td", { class: "center" }, [del]),
+  );
+  return row;
+}
+
+$("#add-provider").addEventListener("click", () => {
+  const name = prompt("Provider id (e.g. openrouter, deepseek):");
+  if (!name) return;
+  if (state.document.providers[name]) { status(`Provider "${name}" already exists`, "err"); return; }
+  state.document.providers[name] = { baseUrl: "", api: "openai-completions", apiKey: "", models: [] };
+  render();
+});
+
+$("#reload").addEventListener("click", () => {
+  load().catch(err => status(`Load failed: ${err.message}`, "err"));
+});
+
+$("#save").addEventListener("click", async () => {
+  try {
+    status("Saving…");
+    const res = await fetch(API, {
+      method: "PUT",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(state.document),
+    });
+    const body = await res.json();
+    if (!res.ok) throw new Error(body.error || res.statusText);
+    status(`Saved → ${body.path}${body.backup ? ` (backup: ${body.backup})` : ""}`, "ok");
+  } catch (err) {
+    status(`Save failed: ${err.message}`, "err");
+  }
+});
+
+load().catch(err => status(`Load failed: ${err.message}`, "err"));
+</script>
+</body>
+</html>

@@ -66,6 +66,12 @@ grok-pi --pi-bin $env:PI_BIN
 
 ## Start
 
+First-time setup — launch the provider-config WebUI (edits Pi's `~/.pi/agent/models.json` with backup + atomic write; running instances hot-reload):
+
+```bash
+grok-pi config
+```
+
 From any project directory:
 
 ```bash
@@ -92,6 +98,7 @@ grok-pi update
 |---|---|
 | Agent runtime | Pi models, providers, tools, extensions, skills, sessions, retries, and compaction |
 | Model management | `/pi-models` provides a native Provider → Model → Details editor with safe `models.json` transactions, backup/restore, live Pi reload, and typed activation; `/model` remains the fast switcher |
+| Provider setup | `grok-pi config` launches a loopback WebUI (CC-lite style) to edit Pi providers, API keys, and models in `models.json`, with backup + atomic save |
 | Terminal UI | Grok Pager input, slash completion, Markdown, tool cards, diffs, dialogs, and scrollback |
 | Product tutorial | `/tutorial` (aliases `/tour`, `/onboarding`) opens 18 grok-pi capability areas: native Pager workflows, Pi providers/models/tools/sessions, the extension/Skill/Package ecosystem, product bridges, optional automation and explicit boundaries |
 | **Remote TUI bridge** | Pi `ctx.ui.custom` components rendered through Grok Build's native Pager, without a second TUI |

@@ -260,6 +260,25 @@ pub(super) enum Command {
         #[arg(long)]
         status: bool,
     },
+
+    /// Launch the local WebUI for configuring Pi model providers.
+    ///
+    /// Serves a single-page editor on 127.0.0.1 that edits Pi's models.json
+    /// (providers, API keys, models) with the same backup/atomic-write
+    /// transaction as the in-TUI /pi-models editor.
+    #[command(name = "config")]
+    Config {
+        /// Port to bind (default 31415; scans upward when taken).
+        #[arg(long, value_name = "PORT")]
+        port: Option<u16>,
+        /// Bind all interfaces so the page can be reached from another device
+        /// on the LAN. Off by default: models.json carries plaintext API keys.
+        #[arg(long)]
+        lan: bool,
+        /// Do not open the page in the default browser.
+        #[arg(long = "no-open")]
+        no_open: bool,
+    },
 }
 
 pub(super) fn normalize_compound_short_flags(

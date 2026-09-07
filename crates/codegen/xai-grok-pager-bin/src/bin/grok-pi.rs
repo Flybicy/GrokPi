@@ -14,6 +14,8 @@ mod bash_extension;
 mod btw_extension;
 #[path = "grok_pi/cli.rs"]
 mod cli;
+#[path = "grok_pi/config_web.rs"]
+mod config_web;
 #[path = "grok_pi/config_skill.rs"]
 mod config_skill;
 #[path = "grok_pi/context_extension.rs"]
@@ -293,6 +295,14 @@ fn main() -> Result<()> {
     }) = args.command
     {
         return migrate_home::run_cli(from, into, dry_run, force, include_auth, status);
+    }
+    if let Some(Command::Config {
+        port,
+        lan,
+        no_open,
+    }) = args.command
+    {
+        return config_web::run(port, lan, no_open);
     }
     // One-shot safe copy when `~/.grok-pi` is empty and legacy `~/.grok` has data.
     match migrate_home::maybe_auto_migrate() {

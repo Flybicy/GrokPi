@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- `grok-pi config` launches a loopback WebUI (CC-lite style) for configuring Pi model providers: provider list, API kind/base URL/key, and per-model fields, edited against Pi's `models.json` through the same snapshot/backup/atomic-write transaction as `/pi-models`. `--port` overrides the default port (31415), `--lan` opts into LAN access, `--no-open` skips opening the browser.
+
 ## [0.1.8] - 2026-09-05
 
 ### Fixed
