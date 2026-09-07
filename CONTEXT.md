@@ -28,7 +28,12 @@
 - rustup 自更新在此网络下报错无害；rust-mingw 自带 dlltool 有 CreateProcess bug ，绝对不要用 self-contained 目录里的，有 msys binutils 就够。
 - 用 stable 1.98 会在上游 mouse.rs 报 E0502（borrowck 更严）；以锁定的 1.94 为准。
 
+## Current state (2026-09-07, done)
+- Flybicy/GrokPi 已重建为 Dwsy fork；已推送 main：5e36e9e0 (webui) + 893d7be2 (mouse.rs 借用修复)。
+- cargo check（1.94.0-gnu）+ 完整 build 通过；`grok-pi config --no-open` 实测：GET 页面/配置、PUT 保存、备份生成、Host 校验 403 全部正常。
+- 修复上游 HEAD 编译错误：mouse.rs 两处 E0502，改为先收集后打开（deferred_fullscreen）。可向上游提 PR。
+- 已建周循环 heartbeat 自动化（id: grokpi）检查 Dwsy 上游新提交并评估与本 fork 冲突。
+
 ## Open items & next step
-1. 编译验证：本机无 MSVC linker，已尝试（VS Build Tools 静默安装被 UAC 挡住）。语法级检查已过；完整 cargo check 待 linker 可用。
-2. 确认 fork 处置（重 fork Dwsy/grok-pi-tui 或批准强推 Flybicy/GrokPi main）后提交推送。
-3. 后续增强设计已落盘 docs/proposals/context-and-skill-evolution.md（billion-context-pi 压缩 + WikiSkill 三层 skill 演化 + 上游同步节奏）。
+1. 可选：把 mouse.rs 的 E0502 修复 PR 给上游 Dwsy/grok-pi-tui。
+2. 后续增强实施（设计见 docs/proposals/context-and-skill-evolution.md）：billion-context 风格压缩接入、WikiSkill 式 skill 演化（subagents V2 做 maintainer/proposer、gating 评估是要点）。
