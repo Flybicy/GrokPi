@@ -107,6 +107,7 @@ grok-pi update
 | Rhai workflows | Upstream `xai-workflow` host (F2 **Pi workflows**); `/workflow`, `/workflows`, `/create-workflow`; scripts under `~/.grok-pi/workflows` and `<repo>/.grok-pi/workflows` |
 | Session workflow | Resume, tree navigation, labels, recap, context inspection, and session picker |
 | Resource management | Native manager for Pi extensions, skills, prompts, and themes |
+| Skill knowledge | Built-in persistent skill wiki (`pi_skill_wiki`, F2 → Agent): pattern catalog injected into the system prompt, `skill_wiki_record/read/search` tools, `/skill-note` quick notes |
 | Updates | GitHub Releases-based update check and installation |
 
 For field-level behavior and intentional omissions, see the [feature matrix](docs/FEATURE_MATRIX.md).

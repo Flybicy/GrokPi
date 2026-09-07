@@ -61,6 +61,8 @@ mod rust_tui_bridge_extension;
 mod session_paths;
 #[path = "grok_pi/shortcut_manager_extension.rs"]
 mod shortcut_manager_extension;
+#[path = "grok_pi/skill_wiki_extension.rs"]
+mod skill_wiki_extension;
 #[path = "grok_pi/subagent_extension.rs"]
 mod subagent_extension;
 #[path = "grok_pi/todo_extension.rs"]
@@ -87,7 +89,7 @@ use xai_grok_pager::{
 };
 use xai_grok_shell::host_features::{
     HostFeatureKey, HostFeatureManifest, PI_ASK_USER_QUESTION, PI_BTW, PI_GOAL, PI_HERDR, PI_LOOP,
-    PI_SUBAGENTS, PI_TODO, PI_WORKFLOWS,
+    PI_SKILL_WIKI, PI_SUBAGENTS, PI_TODO, PI_WORKFLOWS,
 };
 
 mod bundled_host_ui {
@@ -123,6 +125,7 @@ use runtime_config::{
 use rust_tui_bridge_extension::write_rust_tui_bridge_extension;
 use session_paths::pi_session_dir;
 use shortcut_manager_extension::write_shortcut_manager_extension;
+use skill_wiki_extension::write_skill_wiki_extension;
 use subagent_extension::write_subagent_extension;
 use todo_extension::write_todo_extension;
 use tools_extension::{
@@ -439,6 +442,12 @@ async fn run(mut args: Args) -> Result<()> {
     // F2 `[ui].pi_btw` (default off). Restart required — inject at startup only.
     let btw_extension = if host_feature_enabled(PI_BTW) {
         Some(write_btw_extension().context("failed to create Pi btw extension")?)
+    } else {
+        None
+    };
+    // F2 `[ui].pi_skill_wiki` (default on). Restart required — inject at startup only.
+    let skill_wiki_extension = if host_feature_enabled(PI_SKILL_WIKI) {
+        Some(write_skill_wiki_extension().context("failed to create Pi skill-wiki extension")?)
     } else {
         None
     };
@@ -873,6 +882,9 @@ async fn run(mut args: Args) -> Result<()> {
             .as_ref()
             .map(|extension| extension.source_path()),
         btw_extension
+            .as_ref()
+            .map(|extension| extension.source_path()),
+        skill_wiki_extension
             .as_ref()
             .map(|extension| extension.source_path()),
         recap_extension

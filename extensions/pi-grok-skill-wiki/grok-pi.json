@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "settings": [
+    {
+      "key": "pi_skill_wiki",
+      "label": "Pi skill wiki",
+      "description": "Persistent cross-session skill knowledge (WikiSkill-lite): catalog injected into the system prompt, record/read/search tools, /skill-note quick notes.",
+      "keywords": ["pi", "skill", "wiki", "memory", "learning"],
+      "f2": { "category": "agent", "section": "Pi features", "order": 52 },
+      "kind": "bool",
+      "default": true,
+      "restartRequired": true,
+      "configPath": ["ui", "pi_skill_wiki"],
+      "nativeFeatureKey": "pi_skill_wiki"
+    }
+  ],
+  "palette": [
+    { "command": "skill-wiki", "section": "Pi / Extensions", "sectionOrder": 900, "order": 60 },
+    { "command": "skill-note", "section": "Pi / Extensions", "sectionOrder": 900, "order": 61 }
+  ]
+}

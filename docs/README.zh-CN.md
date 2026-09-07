@@ -101,6 +101,7 @@ grok-pi update
 | Rhai Workflow | 上游 `xai-workflow` 宿主（F2 **Pi workflows**）；`/workflow`、`/workflows`、`/create-workflow`；脚本目录 `~/.grok-pi/workflows` 与 `<repo>/.grok-pi/workflows` |
 | 会话流程 | Resume、树导航、标签、回顾、上下文查看和会话选择器 |
 | 资源管理 | Pi 扩展、skills、prompt 和主题的原生管理器 |
+| 技能知识库 | 内置跨会话持久 skill wiki（`pi_skill_wiki`，F2 → Agent）：目录注入系统提示，`skill_wiki_record/read/search` 工具，`/skill-note` 快速记笔记 |
 | 更新 | 基于 GitHub Releases 的更新检查与安装 |
 
 详细行为和有意边界见[功能矩阵（中文）](FEATURE_MATRIX.zh-CN.md) / [English](FEATURE_MATRIX.md)。
