@@ -2,7 +2,7 @@
 
 > 在 Grok Build 原生终端 UI 中运行 Pi Agent Core。
 
-[下载最新版本](https://github.com/Dwsy/grok-pi/releases/latest) · [English](../README.md) · [功能矩阵](FEATURE_MATRIX.md) · [架构说明](NATIVE_GROK_TUI_ALIGNMENT.md) · [验证记录](VERIFICATION.md) · [更新日志](CHANGELOG.zh-CN.md) · [Changelog (EN)](../CHANGELOG.MD)
+[下载最新版本](https://github.com/Flybicy/GrokPi/releases/latest) · [English](../README.md) · [功能矩阵](FEATURE_MATRIX.md) · [架构说明](NATIVE_GROK_TUI_ALIGNMENT.md) · [验证记录](VERIFICATION.md) · [更新日志](CHANGELOG.zh-CN.md) · [Changelog (EN)](../CHANGELOG.MD)
 
 > **Remote TUI 桥接。** Pi 的交互式组件通过 Grok Build 原生 Pager 渲染，在保留 Grok 终端体验的同时接入 Pi 的扩展生态。Pi 用户获得 Grok Build 的原生 UI；Grok Build 用户获得 Pi 的模型、工具、会话和扩展能力。
 
@@ -13,13 +13,13 @@
 ### macOS / Linux
 
 ```bash
-curl -fsSL https://github.com/Dwsy/grok-pi/releases/latest/download/install.sh | sh
+curl -fsSL https://github.com/Flybicy/GrokPi/releases/latest/download/install.sh | sh
 ```
 
 ### Windows
 
 ```powershell
-irm https://github.com/Dwsy/grok-pi/releases/latest/download/install.ps1 | iex
+irm https://github.com/Flybicy/GrokPi/releases/latest/download/install.ps1 | iex
 ```
 
 安装脚本会按平台选择 release asset：

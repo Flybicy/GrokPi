@@ -5,7 +5,7 @@
 
 > Pi agent core in Grok Build's native terminal UI.
 
-[Download latest release](https://github.com/Dwsy/grok-pi/releases/latest) · [ZH](docs/README.zh-CN.md) · [Feature matrix](docs/FEATURE_MATRIX.md) · [Architecture](docs/NATIVE_GROK_TUI_ALIGNMENT.md) · [Verification](docs/VERIFICATION.md) · [Changelog](CHANGELOG.MD) · [更新日志](docs/CHANGELOG.zh-CN.md)
+[Download latest release](https://github.com/Flybicy/GrokPi/releases/latest) · [ZH](docs/README.zh-CN.md) · [Feature matrix](docs/FEATURE_MATRIX.md) · [Architecture](docs/NATIVE_GROK_TUI_ALIGNMENT.md) · [Verification](docs/VERIFICATION.md) · [Changelog](CHANGELOG.MD) · [更新日志](docs/CHANGELOG.zh-CN.md)
 
 > **Remote TUI bridge.** Pi's interactive components render through Grok Build's native Pager, preserving the Grok terminal experience while exposing Pi's extension ecosystem. Pi users get Grok Build's native UI; Grok Build users get Pi's models, tools, sessions, and extensions.
 
@@ -16,13 +16,13 @@
 ### macOS / Linux
 
 ```bash
-curl -fsSL https://github.com/Dwsy/grok-pi/releases/latest/download/install.sh | sh
+curl -fsSL https://github.com/Flybicy/GrokPi/releases/latest/download/install.sh | sh
 ```
 
 ### Windows
 
 ```powershell
-irm https://github.com/Dwsy/grok-pi/releases/latest/download/install.ps1 | iex
+irm https://github.com/Flybicy/GrokPi/releases/latest/download/install.ps1 | iex
 ```
 
 The installer picks the matching release asset and installs `grok-pi`:
