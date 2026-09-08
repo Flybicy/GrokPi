@@ -44,3 +44,4 @@
 - pi bootstrap 自愈落地并实测：删净 pi 后启动 grok-pi -> 自动走 pi.dev 安装器(失败自动回退 npm) -> pi 0.85.1 装好 -> TUI 正常进入。装完后 augment_path_with_pi_dirs 会把常见安装目录补进进程 PATH。
 - commit 14fd9f2a 已推送 main。修复了我那边一个破折号编码乱码。
 - 用户机器上 pi 已由 bootstrap 重新装回(npm 全局)，无需手动处理。
+- 2026-09-08: v0.1.9 发布链路全部打通。workflow 全平台绿（macOS 最后完成），Release 已自动发布（6 个平台包 + install.sh/ps1）。安装/README/update 均指向 Flybicy/GrokPi。后续发版：更新 CHANGELOG 的 [Unreleased] -> 版本号，打 tag vX.Y.Z 推上去即可。
